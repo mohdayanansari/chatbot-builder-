@@ -8,34 +8,75 @@ import AddIcon from "@material-ui/icons/Add";
 import { Send } from "@material-ui/icons";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
+import uniqid from "uniqid";
+import axios from "axios";
 
 const Home = ({ logedIn, setLogedIn }) => {
   const navigate = useNavigate();
   const [questions, setQuestions] = useState([
-    { question: "", questionId: "" },
+    { question: "", questionId: "", createdAt: "" },
   ]);
   const [error, setError] = useState(false);
 
-  const checkLogin = () => {
+  // const checkLogin = () => {
+  //   if (logedIn === false) {
+  //     navigate("/login");
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   checkLogin();
+  // }, []);
+
+  useEffect(() => {
     if (logedIn === false) {
       navigate("/login");
     }
-  };
-
-  useEffect(() => {
-    checkLogin();
-  }, []);
+  }, [logedIn]);
 
   const handleChangeInput = (event, index) => {
     const values = [...questions];
     values[index][event.target.name] = event.target.value;
-    values[index].questionId = index + 1;
+    values[index].questionId = uniqid();
+    values[index].createdAt = Date.now();
     setQuestions(values);
   };
+  // const handleChangeInput = (event, index) => {
+  //   const values = [...flow];
+  //   values[0].flowNodes[index].flowReplies.map(
+  //     (question) => (question.data = event.target.value)
+  //   );
+  //   values[0].flowNodes[index].id = uniqid("questionID-");
+  //   setFlow(values);
+  // };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(questions);
+    const flowNodes = questions.map((que, i) => ({
+      id: que.questionId,
+      isStartNode: i === 0,
+      flowNodeType: "Message",
+      flowReplies: [
+        {
+          flowReplyType: "text",
+          data: que.question,
+        },
+      ],
+    }));
+    const flowEdges = questions.map((que, i) => ({
+      id: i + 1,
+      sourceNodeId: que.questionId,
+      targetNodeId:
+        i === questions.length - 1 ? "" : questions[i + 1].questionId,
+    }));
+
+    const url = "https://no-code-botbuilder.herokuapp.com/flow/test";
+    console.log({ name: "test", flowNodes, flowEdges });
+    try {
+      await axios.put(url, { name: "test", flowNodes, flowEdges });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleAddQuestion = () => {
@@ -47,8 +88,8 @@ const Home = ({ logedIn, setLogedIn }) => {
       values[0].question === "" ||
       values[0].question === values[index].question
     ) {
-      console.log("empty");
-      console.log(values);
+      // console.log("empty");
+      // console.log(values);
       alert("Can not delete first question! ⚠️");
     } else {
       values.splice(index, 1);
@@ -66,11 +107,19 @@ const Home = ({ logedIn, setLogedIn }) => {
     <div className="h-screen my-font bg-customs">
       <Container>
         <div className="py-[20px] text-center ">
-          <h1 className=" text-xl lg:text-4xl text-white font-black ">
-            <span className="underline decoration-wavy underline-offset-4 decoration-red-600">Create</span>{" "}
-            <span className="underline decoration-wavy underline-offset-4 decoration-blue-600">Your</span>{" "}
-            <span className="underline decoration-wavy underline-offset-4 decoration-green-800">Chatbot</span>{" "}
-            <span className="underline decoration-wavy underline-offset-4 decoration-purple-500">Questions</span>
+          <h1 className="text-xl font-black text-white lg:text-4xl">
+            <span className="underline decoration-wavy underline-offset-4 decoration-red-600">
+              Create
+            </span>{" "}
+            <span className="underline decoration-wavy underline-offset-4 decoration-blue-600">
+              Your
+            </span>{" "}
+            <span className="underline decoration-wavy underline-offset-4 decoration-green-800">
+              Chatbot
+            </span>{" "}
+            <span className="underline decoration-wavy underline-offset-4 decoration-purple-500">
+              Questions
+            </span>
           </h1>
         </div>
 

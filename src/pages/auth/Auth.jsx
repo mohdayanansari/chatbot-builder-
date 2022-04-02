@@ -83,7 +83,7 @@ const Auth = ({ logedIn, setLogedIn }) => {
     if (isSignup) {
     } else {
       // const { email, password } = saveUser;
-      saveUser.map((u) => {
+      saveUser.forEach((u) => {
         if (u.password === form.password && u.email === form.email) {
           setInvalidCredentials("");
           setLogedIn(true);
