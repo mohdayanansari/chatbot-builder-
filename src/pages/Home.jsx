@@ -10,6 +10,8 @@ import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import uniqid from "uniqid";
 import axios from "axios";
+import { Tab } from "@headlessui/react";
+import SecondTab from "../containers/SecondTab";
 
 const Home = ({ logedIn, setLogedIn }) => {
   const navigate = useNavigate();
@@ -104,65 +106,100 @@ const Home = ({ logedIn, setLogedIn }) => {
   }, [questions]);
 
   return (
-    <div className="h-screen my-font bg-customs">
-      <Container>
-        <div className="py-[20px] text-center ">
-          <h1 className="text-xl font-black text-white lg:text-4xl">
-            <span className="underline decoration-wavy underline-offset-4 decoration-red-600">
-              Create
-            </span>{" "}
-            <span className="underline decoration-wavy underline-offset-4 decoration-blue-600">
-              Your
-            </span>{" "}
-            <span className="underline decoration-wavy underline-offset-4 decoration-green-800">
-              Chatbot
-            </span>{" "}
-            <span className="underline decoration-wavy underline-offset-4 decoration-purple-500">
-              Questions
-            </span>
-          </h1>
-        </div>
-
-        <form onSubmit={handleSubmit}>
-          <div className="h-[calc(100vh-150px)] pr-[10px] lg:pr-[30px] overflow-y-auto mb-[10px] lg:mb-[20px] scrollbar scrollbar-thumb-gray-900 scrollbar-track-transparent">
-            {questions.map((question, index) => (
-              <div key={index}>
-                <div className="my-[10px] lg:my-[30px] w-full flex shadow-lg rounded-lg border border-gray-100 p-[10px] lg:p-[20px] glasss">
-                  <TextField
-                    name="question"
-                    label="Enter Your Question"
-                    variant="outlined"
-                    required
-                    onChange={(event) => handleChangeInput(event, index)}
-                    value={question.question}
-                    className="w-full "
-                  />
-                  <IconButton onClick={() => handleRemoveQuestion(index)}>
-                    <RemoveIcon />
-                  </IconButton>
-                  <IconButton onClick={() => handleAddQuestion()}>
-                    <AddIcon />
-                  </IconButton>
-                </div>
-              </div>
-            ))}
-            {error && (
-              <Alert severity="error">
-                <AlertTitle>Error</AlertTitle>
-                Please fill the required <strong>detail</strong>
-              </Alert>
-            )}
-          </div>
-          <Button
-            variant="contained"
-            color="primary"
-            type="submit"
-            endIcon={<Send />}
+    <div className="h-full my-font bg-customs pt-[20px]">
+      <Tab.Group>
+        <Tab.List className="flex justify-between p-[5px] items-center  w-[80%] lg:w-[30%] mx-auto rounded-lg h-[60px] font-black lg:text-lg glasss transition-all duration-300 transform ease-in-out">
+          <Tab
+            className={({ selected }) =>
+              ` ${
+                selected
+                  ? "bg-white bg-opacity-40 text-blue-600 "
+                  : " text-black"
+              } rounded-md h-[50px] p-[10px] flex justify-center items-center w-1/2 font-bold transition-all duration-300 transform ease-linear`
+            }
           >
-            Submit
-          </Button>
-        </form>
-      </Container>
+            Create Chat Bot Questions
+          </Tab>
+          <Tab
+            className={({ selected }) =>
+              ` ${
+                selected
+                  ? "bg-white bg-opacity-40 text-blue-600"
+                  : " text-black"
+              } rounded-md h-[50px] p-[10px] flex justify-center items-center w-1/2 font-bold transition-all duration-300 transform ease-linear`
+            }
+          >
+            See Answers
+          </Tab>
+        </Tab.List>
+        <Tab.Panels>
+          {/* TAB___1 */}
+          <Tab.Panel>
+            <Container>
+              <div className="py-[20px] text-center ">
+                <h1 className="text-xl font-black text-white lg:text-4xl">
+                  <span className="underline decoration-wavy underline-offset-4 decoration-red-600">
+                    Create
+                  </span>{" "}
+                  <span className="underline decoration-wavy underline-offset-4 decoration-blue-600">
+                    Your
+                  </span>{" "}
+                  <span className="underline decoration-wavy underline-offset-4 decoration-green-800">
+                    Chatbot
+                  </span>{" "}
+                  <span className="underline decoration-wavy underline-offset-4 decoration-purple-500">
+                    Questions
+                  </span>
+                </h1>
+              </div>
+
+              <form onSubmit={handleSubmit}>
+                <div className="h-[calc(100vh-150px)] pr-[10px] lg:pr-[30px] overflow-y-auto mb-[10px] lg:mb-[20px] scrollbar scrollbar-thumb-gray-900 scrollbar-track-transparent">
+                  {questions.map((question, index) => (
+                    <div key={index}>
+                      <div className="my-[10px] lg:my-[30px] w-full flex shadow-lg rounded-lg border border-gray-100 p-[10px] lg:p-[20px] glasss">
+                        <TextField
+                          name="question"
+                          label="Enter Your Question"
+                          variant="outlined"
+                          required
+                          onChange={(event) => handleChangeInput(event, index)}
+                          value={question.question}
+                          className="w-full "
+                        />
+                        <IconButton onClick={() => handleRemoveQuestion(index)}>
+                          <RemoveIcon />
+                        </IconButton>
+                        <IconButton onClick={() => handleAddQuestion()}>
+                          <AddIcon />
+                        </IconButton>
+                      </div>
+                    </div>
+                  ))}
+                  {error && (
+                    <Alert severity="error">
+                      <AlertTitle>Error</AlertTitle>
+                      Please fill the required <strong>detail</strong>
+                    </Alert>
+                  )}
+                </div>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                  endIcon={<Send />}
+                >
+                  Submit
+                </Button>
+              </form>
+            </Container>
+          </Tab.Panel>
+          {/* TAB____2 */}
+          <Tab.Panel>
+            <SecondTab />
+          </Tab.Panel>
+        </Tab.Panels>
+      </Tab.Group>
     </div>
   );
 };
